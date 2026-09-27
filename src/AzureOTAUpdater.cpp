@@ -104,7 +104,9 @@ bool AzureOTAUpdater::UpdateFirmwareFromUrl(const char* firmwareUrl) {
     
     HttpsOTA.onHttpEvent(HttpEvent);
     Serial.println("Starting OTA Update from Azure Blob Storage " + otaUrl + " ...");
-    HttpsOTA.begin(otaUrl.c_str(), server_certificate);
+    // false = check the host name. Only then does esp-tls send SNI; without SNI the cluster's
+    // Traefik answers with its self-signed default certificate instead of the forgejo.intern one.
+    HttpsOTA.begin(otaUrl.c_str(), server_certificate, false);
     Serial.println("OTA Update in progress...");
     return true;
 }
